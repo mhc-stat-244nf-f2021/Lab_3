@@ -1,0 +1,180 @@
+---
+title: 'Lab 3: Poisson and Logistic Regression, and their ties to RR and OR'
+subtitle: "STAT 244NF: Infectious Diseases Modeling"
+author: "YOUR NAME HERE"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(dplyr)
+library(ggplot2)
+```
+
+## Infectious Disease Outbreak
+
+An infectious disease outbreak has been reported among adults over 21 years old. Epidemiological investigators identified cases of disease over the past month and tracked possible exposures, including going to a bar within the last 10 days (1 if yes, 0 if no), and going to an outdoor park with in the last 10 days (1 if yes, 0 if no). The data for this outbreak are generated below and saved as `id_outbreak`. 
+
+```{r echo=FALSE}
+set.seed(12346)
+
+N <- 425
+
+id_outbreak <- data.frame(
+  int = rep(1, N),
+  bar_last_10 = rbinom(n=N, size=1, prob=0.3),
+  park_last_10 = rbinom(n=N, size=1, prob=0.62)
+)
+
+b0 <- -4
+b1 <- 0.2
+b2 <- 3
+b3 <- 0.5
+B <- as.matrix(c(b0, b2, b3),ncol=1)
+
+prob_fcn <- function(X, b){
+  X=id_outbreak
+  b=B
+  exp(as.matrix(X)%*%b)/(1+exp(as.matrix(X)%*%b))
+}
+
+test <- prob_fcn(id_outbreak, B)
+
+id_outbreak <- id_outbreak %>%
+  mutate(
+    case = apply(test, 1, FUN = rbinom, n = 1, size=1)
+  )
+
+# head(id_outbreak)
+```
+
+#### 1. There are two potential exposures in this fictional outbreak. What are they?
+
+
+## Calculating RR and OR based on observed data (no model)
+
+*For the following questions, you may disregard the time component.*
+
+
+#### 2. Calculate the probability that a person who went to the park in the last 10 days is infected.
+
+```{r}
+
+```
+
+
+#### 3. Calculate the probability that a person who did not go to the park in the last 10 days is infected.
+
+```{r}
+
+```
+
+
+#### 4. Calculate the probability that a person who went to a bar in the last 10 days is infected.
+
+```{r}
+
+```
+
+
+#### 5. Calculate the probability that a person who did not go to a bar in the last 10 days is infected.
+
+```{r}
+
+```
+
+#### 6. Calculate the relative risk, the chance that a person who went to a park will develop disease relative to the chance that a person who did not go to a park will develop disease. 
+```{r}
+
+```
+
+#### 7. Calculate the odds ratio for park exposure. 
+
+```{r}
+
+```
+
+#### 8. Calculate the odds ratio for bar exposure. 
+
+```{r}
+
+```
+
+#### 9. Compare the relative risk and odds ratio for bar exposure. Are they similar?
+
+
+
+#### 10. Compare the relative risk and odds ratio for park exposure. Are they similar?
+
+
+
+#### 11. Among these two potential exposures, which is more likely to be the source of the outbreak? Why?
+
+
+
+
+
+## Poisson regression
+
+####  12. Fit a Poisson regression model with bar exposure and park exposure as explanatory (independent) variables and count as the dependent variable. Remember to use the `glm` function and to specify `family` argument in the `glm` function as `poisson`. Assign the model fit to `outbreak_pois` and print the summary of the model fit.
+
+```{r}
+
+```
+
+#### 13. What is the estimated rate of cases, $\hat{\lambda}$, for people that did not do to a bar or the park? The equation below is a useful starting point. You will still need to solve for $\hat{\lambda}$ and calculate the estimate.
+
+$$
+\log(\hat{\lambda})=3.0699 + 0.1353\times 0 + (-0.0811) \times 0 
+$$
+
+```{r}
+
+```
+
+#### 13. What is the estimated rate of cases, $\hat{\lambda}$, for people that went to a park but did not go to a bar? 
+
+```{r}
+
+```
+
+#### 14. In order to calculate relative risk of an exposure, we exponetiate the estimate of the effect of that exposure. What is the estimated relative risk of bar exposure for this disease? What is the associated 95% confidence interval?
+
+```{r}
+
+```
+
+#### 15. What is the estimated relative risk of park exposure for this disease. What is the associated 95% confidence interval?
+
+```{r}
+
+```
+
+
+## Binomial logistic regression
+
+#### 16. Fit a logistic regression model with bar exposure and park exposure as explanatory (independent) variables and count as the dependent variable. Remember to use the `glm` function and to specify `family` argument in the `glm` function as `binomial`. Assign the model fit to `outbreak_binom` and print the summary of the model fit.
+
+```{r}
+
+```
+
+#### 17. What is the estimated odds of $\hat{\pi}/(1-\hat{\pi})$, for people that did not do to a bar or the park? Use the same logic as for Poisson regression. You will still need to solve for $\hat{\pi}/(1-\hat{\pi})$ and calculate the estimate.
+
+```{r}
+
+```
+
+#### 18. In order to calculate odds ratio, we exponetiate the estimate of the effect of that exposure. What is the estimated odds ratio associated with bar exposure for this disease? What is the associated 95% confidence interval?
+
+```{r}
+
+```
+
+#### 19. What is the estimated odds ratio associated with park exposure for this disease? What is the associated 95% confidence interval?
+
+```{r}
+
+```
