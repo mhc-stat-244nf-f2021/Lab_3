@@ -118,16 +118,18 @@ id_outbreak <- id_outbreak %>%
 
 ## Poisson regression
 
-####  12. Fit a Poisson regression model with bar exposure and park exposure as explanatory (independent) variables and count as the dependent variable. Remember to use the `glm` function and to specify `family` argument in the `glm` function as `poisson`. Assign the model fit to `outbreak_pois` and print the summary of the model fit.
+####  12. Fit a Poisson regression model with bar exposure and park exposure as explanatory (independent) variables and case as the dependent variable. Remember to use the `glm` function and to specify `family` argument in the `glm` function as `poisson`. Assign the model fit to `outbreak_pois` and print the summary of the model fit.
 
 ```{r}
-
+outbreak_pois = glm(data=id_outbreak, case ~ bar_last_10 + park_last_10, 
+                    family=poisson(link = "log"))
+summary(outbreak_pois)
 ```
 
 #### 13. What is the estimated rate of cases, $\hat{\lambda}$, for people that did not do to a bar or the park? The equation below is a useful starting point. You will still need to solve for $\hat{\lambda}$ and calculate the estimate.
 
 $$
-\log(\hat{\lambda})=3.0699 + 0.1353\times 0 + (-0.0811) \times 0 
+\log(\hat{\lambda})=-3.9648 + 2.8113\times 0 + 0.1261 \times 0 
 $$
 
 ```{r}
